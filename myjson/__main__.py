@@ -1,3 +1,4 @@
+import sys
 import argparse
 import json
 
@@ -28,8 +29,10 @@ def main():
     group.add_argument(
         '--create',
         nargs='*',
-        help="Upload JSON files to myjson",
+        help='Upload JSON files to myjson',
         metavar='file',
+        type=argparse.FileType('r'),
+        default=sys.stdin,
     )
     parser.add_argument(
         '--id-only',
@@ -41,8 +44,13 @@ def main():
         help='Compact output by removing whitespace. (Used with --get)',
         action='store_true',
     )
+    parser.add_argument(
+        '--debug',
+        help="Extended error output",
+        action='store_true'
+    )
 
-    args = parser.parse_args(['-h'])
+    args = parser.parse_args()
 
     try:
         if args.get:
@@ -51,15 +59,19 @@ def main():
                 print(json.dumps(j, separators=(',',':')))
             else:
                 print(json.dumps(j, indent=4))
+
         elif args.update:
-            print(update(args.update[0], file=args.update[1]))
+            with open(args.update[1]) as file:
+                print(update(args.update[0], file=file))
 
         elif args.create:
-            for file in args.create:
-                print(create(file=file, id_only=args.id_only))
+            [print(create(jsonable=json.loads(s), id_only=args.id_only)) for s in args.create]
 
     except Exception as e:
-        print(str(e))
+        if args.debug:
+            raise e
+        else:
+            print(str(e))
 
 if __name__ == '__main__':
     main()

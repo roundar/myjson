@@ -52,8 +52,7 @@ def create(jsonable=None, file=None, id_only=False):
         raise MyjsonException("Specify a json-able object OR a file as input to store json.")
 
     if file:
-        with open(file, 'r') as f:
-            jsonable = json.load(f)
+        jsonable = json.load(file)
 
     request = Request(URL.format(id=''), data=json.dumps(jsonable).encode())
     request.add_header('Content-Type', 'application/json')
@@ -71,8 +70,7 @@ def update(id, jsonable=None, file=None):
         raise MyjsonException("Specify a json-able object OR a file as input for an update.")
 
     if file:
-        with open(file, 'r') as f:
-            jsonable = json.load(f)
+        jsonable = json.load(file)
 
     u = _get_url(id)
     request = Request(u, data=json.dumps(jsonable).encode())
