@@ -2,7 +2,7 @@ import sys
 import argparse
 import json
 
-from . import get, update, create
+from . import load, dump
 
 
 def main():
@@ -54,7 +54,7 @@ def main():
 
     try:
         if args.get:
-            j = get(args.get[0])
+            j = load(args.get[0])
             if args.compact:
                 print(json.dumps(j, separators=(',',':')))
             else:
@@ -62,10 +62,12 @@ def main():
 
         elif args.update:
             with open(args.update[1]) as file:
-                print(update(args.update[0], file=file))
+                print(dump(json.load(file), args.update[0]))
 
         elif args.create:
-            [print(create(jsonable=json.loads(s), id_only=args.id_only)) for s in args.create]
+            for file in args.create:
+                with open(file, 'r') as f:
+                    print(dump(json.load(f), id_only=args.id_only))
 
     except Exception as e:
         if args.debug:

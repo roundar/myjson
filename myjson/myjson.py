@@ -1,88 +1,79 @@
-import json
 import re
-import sys
+import json
 from urllib.request import Request, urlopen, HTTPError
 
 URL = 'https://api.myjson.com/bins/{id}'
 
-valid_id = re.compile("[a-zA-Z0-9]{3,8}")
+valid_id = re.compile("[a-zA-Z0-9]+")
 
 
-class MyjsonException(Exception):
-    pass
+class MyjsonNotFoundException(Exception):
+    """Raised when no JSON is found at the requested endpoint."""
+    def __init__(self, endpoint, *args):
+        super().__init__("No JSON found at {}".format(endpoint))
+        self.endpoint = endpoint
 
 
-def _get_id(url):
-    if not url.startswith('https://api.myjson.com/bins/'):
-        raise MyjsonException("Invalid url: {}".format(url))
-    return url.split('/')[-1]
+def _get_url(id_or_url):
 
+    if not id_or_url:
+        return URL.format(id='')
 
-def _get_url(id):
-    # Forgive including url in place of an ID
-    if id.startswith('https://api.myjson.com/bins/'):
-        id = id.split('/')[-1]
-
-    if not valid_id.match(id):
-        raise MyjsonException("Invalid ID: {} (Must be 2-8 alphanumeric characters)".format(id))
+    if id_or_url.startswith('https://api.myjson.com/bins/'):
+        id = id_or_url.split('/')[-1]
+    else:
+        id = id_or_url
 
     return URL.format(id=id)
 
 
-def get(id):
-    """ Return the json object from associated with this ID (also accepts a full URL)"""
-    u = _get_url(id)
+def load(id_or_url, **kwargs):
+    """Load json from a myjson endpoint
+
+    :param id_or_url: ID (3-8 alphanumeric characters, e.g., 23ff9) of
+        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9)
+    :param kwargs: additional arguments (identical to json.loads)
+    :return: The JSON object found at the requested myjson endpoint
+    :raises:
+        :class:`MyjsonNotFoundException` if the endpoint does not exist
+    """
+    url = _get_url(id_or_url)
+
     try:
-        resp = urlopen(u)
+        resp = urlopen(url)
     except HTTPError as e:
         if e.code == 404:
-            raise MyjsonException("{} does not exist.".format(u)) from None
+            raise MyjsonNotFoundException(url) from None
         else:
             raise e
-    return json.loads(resp.read().decode())
+
+    return json.loads(resp.read().decode(), **kwargs)
 
 
-def create(jsonable=None, file=None, id_only=False):
-    """Host a new json endpoint"""
+def dump(obj, id=None, id_only=False, **kwargs):
+    """Update or create a myjson endpoint
 
-    if jsonable is None and file is None:
-        raise MyjsonException("Create requires a json-able object or a file as input.")
-
-    if jsonable and file:
-        raise MyjsonException("Specify a json-able object OR a file as input to store json.")
-
-    if file:
-        jsonable = json.load(file)
-
-    request = Request(URL.format(id=''), data=json.dumps(jsonable).encode())
+    :param obj:
+    :param id: ID (3-8 alphanumeric characters, e.g., 23ff9) of
+        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9)
+    :param id_only: Only return the ID of the updated/created endpoint instead of the full URL
+    :param kwargs: Any remaining arguments found in json.dumps
+    :return: The URL of the hosted JSON (or the ID if id_only is specified)
+    :raises:
+        :class:`MyjsonNotFoundException` if the endpoint is specified and does not exist
+    """
+    url = _get_url(id)
+    request = Request(url, data=json.dumps(obj, **kwargs).encode())
     request.add_header('Content-Type', 'application/json')
-    uri = json.loads(urlopen(request).read().decode())['uri']
+    request.get_method = lambda: 'PUT' if id else 'POST'
+
+    try:
+        resp = urlopen(request)
+    except HTTPError as e:
+        if e.code == 404:
+            raise MyjsonNotFoundException(url) from None
+        else:
+            raise e
+
+    uri = json.loads(resp.read().decode())['uri']
     return uri.split('/')[-1] if id_only else uri
-
-
-def update(id, jsonable=None, file=None):
-    """Update an existing json endpoint"""
-
-    if jsonable is None and file is None:
-        raise MyjsonException("Update requires a json-able object or a file as input.")
-
-    if jsonable and file:
-        raise MyjsonException("Specify a json-able object OR a file as input for an update.")
-
-    if file:
-        jsonable = json.load(file)
-
-    u = _get_url(id)
-    request = Request(u, data=json.dumps(jsonable).encode())
-    request.add_header('Content-Type', 'application/json')
-    request.get_method = lambda: 'PUT'
-
-    try:
-        urlopen(request)
-    except HTTPError as e:
-        if e.code == 404:
-            raise MyjsonException("{} does not exist to update.".format(u)) from None
-        else:
-            raise e
-
-    return "{} successfully updated".format(u)

@@ -1,21 +1,31 @@
-#mjson
+# mjson
+  
 
-A Python wrapper for the mysjon.com free beta service.
+Quickly, freely host json data with this Python wrapper for the mysjon.com free beta service.
+
+Anyone can read and alter this data as soon as you post it...
 
 ## Install
 `pip install git+https://github.com/roundar/myjson`
 
 ## Use as module:
-```python
-import myjson
 
->>>
->>> id = myjson.create({'test':'json'}) # upload to myjson.com
->>> print(myjson.get(id)) # grab it from myjson.com
-{"test":"json"}
->>> myjson.update(id, {'after': 'change'}) # Update the copy on myjson.com server
->>> print(myjson.get(id))
-{"test":"json"}
+If you can use python's `json` module, you can use this one:
+
+``` python
+>>> import myjson
+>>> o = {"test": "ing"}
+>>> url = myjson.dump(o)
+>>> url
+'https://api.myjson.com/bins//183j9v'
+>>> myjson.load(url)
+{'test': 'ing'}
+>>> id = myjson.dump({"another": "test"}, id_only=True)
+>>> id
+'12qmtv'
+>>> myjson.load(id)
+{'another': 'test'}
+
 ```
 
 ## As a script
