@@ -1,9 +1,7 @@
+`{} mjson <mysjon.com>`_
+========================
 
-.. _myjson: http://myjson.com
-{} mjson
-=========
-
-Quickly, freely host json data with this Python wrapper for the mysjon.com free beta service.
+Quickly, freely host json data with this Python wrapper for the `{} mjson <mysjon.com>`_ free beta service.
 
 Install
 ~~~~~~~
@@ -58,3 +56,7 @@ As a script
    ~$ myjson get ut5n --compact
 
    [1,2,3]
+
+Thanks
+======
+`@lance_ramoth <https://twitter.com/lance_ramoth>`_ for providing `this service! <http://myjson.com/about>`_
