@@ -1,8 +1,8 @@
 
-`{} mjson <http://mysjon.com>`_
+`{} mjson <http://myjson.com>`_
 ========================
 
-Quickly, freely host json data with this Python wrapper for the `{} mjson <http://mysjon.com>`_ free beta service.
+Quickly, freely host json data with this Python wrapper for the `{} mjson <http://myjson.com>`_ free beta service.
 
 Install
 ~~~~~~~
