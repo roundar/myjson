@@ -3,8 +3,6 @@ mjson
 
 Quickly, freely host json data with this Python wrapper for the mysjon.com free beta service.
 
-Warning: Anyone can read and alter this data as soon as you post it...
-
 Install
 ~~~~~~~
 ::
