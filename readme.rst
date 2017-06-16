@@ -1,5 +1,7 @@
-{} mjson
-=====  
+
+.. _myjson: http://myjson.com
+{} mjson_
+=========
 
 Quickly, freely host json data with this Python wrapper for the mysjon.com free beta service.
 
