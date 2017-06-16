@@ -1,6 +1,5 @@
 from .myjson import (
-    load,
-    dump,
+    get,
+    store,
     MyjsonNotFoundException,
-    monkeypatchjson
 )

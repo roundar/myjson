@@ -1,10 +1,8 @@
-import re
-import json
+from json import loads
+
 from urllib.request import Request, urlopen, HTTPError
 
 URL = 'https://api.myjson.com/bins/{id}'
-
-valid_id = re.compile("[a-zA-Z0-9]+")
 
 
 class MyjsonNotFoundException(Exception):
@@ -14,66 +12,71 @@ class MyjsonNotFoundException(Exception):
         self.endpoint = endpoint
 
 
-def _get_url(id_or_url):
+def _get_url_and_id(id_or_url):
 
     if not id_or_url:
-        return URL.format(id='')
-
-    if id_or_url.startswith('https://api.myjson.com/bins/'):
+        id = None
+    elif id_or_url.startswith(URL.format(id='')):
         id = id_or_url.split('/')[-1]
     else:
         id = id_or_url
 
-    return URL.format(id=id)
+    return URL.format(id=id if id else ''), id
 
 
-def load(id_or_url, **kwargs):
-    """Load json from a myjson endpoint
-
-    :param id_or_url: ID (3-8 alphanumeric characters, e.g., 23ff9) of
-        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9)
-    :param kwargs: additional arguments (identical to json.loads)
-    :return: The JSON object found at the requested myjson endpoint
-    :raises:
-        :class:`MyjsonNotFoundException` if the endpoint does not exist
-    """
-    url = _get_url(id_or_url)
-
+def read_url(url):
     try:
         resp = urlopen(url)
     except HTTPError as e:
         if e.code == 404:
-            raise MyjsonNotFoundException(url) from None
+            raise MyjsonNotFoundException(url if isinstance(url, str) else url.url()) from None
         else:
             raise e
+    return resp.read().decode()
 
-    return json.loads(resp.read().decode(), **kwargs)
+
+def get(id_or_url, pretty=False):
+    """Load json from a myjson endpoint
+
+    :param id_or_url: ID (3-8 alphanumeric characters, e.g., 23ff9) of
+        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9)
+    :param pretty: Structure the json string with linebreaks and indents
+    :return: JSON string
+    :raises:
+        :class:`MyjsonNotFoundException` if the endpoint does not exist
+    """
+    url, id = _get_url_and_id(id_or_url)
+
+    if not id:
+        raise ValueError('No mysjon id specified')
+
+    if pretty:
+        url += "?pretty"
+
+    return read_url(url)
 
 
-def dump(obj, id=None, id_only=False, **kwargs):
+def store(json, update=None, id_only=False):
+
     """Update or create a myjson endpoint
 
-    :param obj:
-    :param id: ID (3-8 alphanumeric characters, e.g., 23ff9) of
-        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9)
-    :param id_only: Only return the ID of the updated/created endpoint instead of the full URL
-    :param kwargs: Any remaining arguments found in json.dumps
-    :return: The URL of the hosted JSON (or the ID if id_only is specified)
+    :param json: JSON serialized string to host at mjson.com
+    :param update: ID (3-8 alphanumeric characters, e.g., 23ff9) of
+        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9) to update.
+    :param id_only: Only return the ID of the updated/created endpoint instead of the full URL.
+    :return: The URL of the hosted JSON (or the ID if id_only is specified).
     :raises:
         :class:`MyjsonNotFoundException` if the endpoint is specified and does not exist
     """
-    url = _get_url(id)
-    request = Request(url, data=json.dumps(obj, **kwargs).encode())
+
+    url, id = _get_url_and_id(update)
+    request = Request(url, data=json.encode())
     request.add_header('Content-Type', 'application/json')
     request.get_method = lambda: 'PUT' if id else 'POST'
 
-    try:
-        resp = urlopen(request)
-    except HTTPError as e:
-        if e.code == 404:
-            raise MyjsonNotFoundException(url) from None
-        else:
-            raise e
+    response = read_url(request)
 
-    uri = json.loads(resp.read().decode())['uri']
-    return uri.split('/')[-1] if id_only else uri
+    if not id:
+        url, id = _get_url_and_id(loads(response)['uri'])
+
+    return id if id_only else url
