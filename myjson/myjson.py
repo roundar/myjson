@@ -41,7 +41,7 @@ def _read_url(url):
 def get(id_or_url, pretty=False):
     """Load json from a myjson endpoint
 
-    :param id_or_url: ID (3-8 alphanumeric characters, e.g., 23ff9) of
+    :param id_or_url: ID (e.g., 23ff9) of
         the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9)
     :param pretty: Structure the json string with linebreaks and indents
     :return: JSON string
@@ -64,8 +64,7 @@ def store(json, update=None, id_only=False):
     """Update or create a myjson endpoint
 
     :param json: JSON serialized string to host at mjson.com
-    :param update: ID (3-8 alphanumeric characters, e.g., 23ff9) of
-        the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9) to update.
+    :param update: ID (e.g., 23ff9) of the json OR the full URL (E.g., https://api.myjson.com/bins/23ff9) to update.
     :param id_only: Only return the ID of the updated/created endpoint instead of the full URL.
     :return: The URL of the hosted JSON (or the ID if id_only is specified).
     :raises:
