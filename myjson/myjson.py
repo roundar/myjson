@@ -1,6 +1,9 @@
 from json import loads
 
-from urllib.request import Request, urlopen, HTTPError
+try:
+    from urllib.request import Request, urlopen, HTTPError
+except:
+    from urllib2 import urlopen, Request, HTTPError
 
 URL = 'https://api.myjson.com/bins/{id}'
 
@@ -8,7 +11,7 @@ URL = 'https://api.myjson.com/bins/{id}'
 class MyjsonNotFoundException(Exception):
     """Raised when no JSON is found at the requested endpoint."""
     def __init__(self, endpoint, *args):
-        super().__init__("No JSON found at {}".format(endpoint))
+        super(self.__class__, self).__init__("No JSON found at {}".format(endpoint))
         self.endpoint = endpoint
 
 
@@ -29,7 +32,7 @@ def read_url(url):
         resp = urlopen(url)
     except HTTPError as e:
         if e.code == 404:
-            raise MyjsonNotFoundException(url if isinstance(url, str) else url.url()) from None
+            raise MyjsonNotFoundException(url if isinstance(url, str) else url.url())
         else:
             raise e
     return resp.read().decode()

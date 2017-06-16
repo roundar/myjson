@@ -16,7 +16,7 @@ def main():
     get_parser.set_defaults(func=lambda args: get(args.id_or_url, not args.compact))
 
     store_parser = subs.add_parser('store')
-    store_parser.add_argument('--update', nargs=1, metavar='id_or_url', type=str, default='',
+    store_parser.add_argument('--update', metavar='id_or_url',
                               help="Update the given id or url instead of creating a new store")
     store_parser.add_argument('--id-only', action='store_true',
                               help="Only return the id's of the endpoints instead of the full urls.")

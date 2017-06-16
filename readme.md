@@ -6,7 +6,7 @@ Quickly, freely host json data with this Python wrapper for the mysjon.com free 
 Warning: Anyone can read and alter this data as soon as you post it...
 
 ## Install
-`pip install git+https://github.com/roundar/myjson`
+`pip install myjson`
 
 ## Use as module:
 

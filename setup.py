@@ -2,9 +2,10 @@ from distutils.core import setup
 
 setup(
     name='myjson',
-    version='1.0.0',
+    version='1.1.0',
     description='API wrapper for myjson',
     url='https://github.com/roundar/myjson',
+    download_url='https://github.com/roundar/myjson/archive/v1.1.0.tar.gz',
     packages=['myjson'],
     license='WTFPL',
     author='roundar',
