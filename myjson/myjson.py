@@ -27,7 +27,7 @@ def _get_url_and_id(id_or_url):
     return URL.format(id=id if id else ''), id
 
 
-def read_url(url):
+def _read_url(url):
     try:
         resp = urlopen(url)
     except HTTPError as e:
@@ -56,7 +56,7 @@ def get(id_or_url, pretty=False):
     if pretty:
         url += "?pretty"
 
-    return read_url(url)
+    return _read_url(url)
 
 
 def store(json, update=None, id_only=False):
@@ -77,7 +77,7 @@ def store(json, update=None, id_only=False):
     request.add_header('Content-Type', 'application/json')
     request.get_method = lambda: 'PUT' if id else 'POST'
 
-    response = read_url(request)
+    response = _read_url(request)
 
     if not id:
         url, id = _get_url_and_id(loads(response)['uri'])
