@@ -6,14 +6,14 @@ Quickly, freely host json data with this Python wrapper for the `{} mjson <http:
 
 Install
 ~~~~~~~
-::
+```
 
    pip install git+https://github.com/Quanta-of-solitude/myjson
-
+```
 Use as module:
 ~~~~~~~~~~~~~~
 
-::
+```
 
    >>> import myjson
    >>> import json
@@ -31,12 +31,12 @@ Use as module:
    'ccq2j'
    >>> url
    'https://api.myjson.com/bins/ccq2j'
-
+```
 
 As a script
 ~~~~~~~~~~~
 
-::
+```
 
    ~$ myjson -h
    usage: myjson [-h] {get,store} ...
@@ -57,7 +57,7 @@ As a script
    ~$ myjson get ut5n --compact
 
    [1,2,3]
-
+```
 Thanks
 ======
 `@lance_ramoth <https://twitter.com/lance_ramoth>`_ for providing `this service! <http://myjson.com/about>`_
