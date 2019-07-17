@@ -1,19 +1,17 @@
 
-`{} mjson <http://myjson.com>`_
+`{} mjson <http://myjson.com>`
 ========================
 
 Quickly, freely host json data with this Python wrapper for the `{} mjson <http://myjson.com>`_ free beta service.
 
-Install
+#Install
 ~~~~~~~
-```
+>pip install git+https://github.com/Quanta-of-solitude/myjson
 
-   pip install git+https://github.com/Quanta-of-solitude/myjson
-```
 Use as module:
 ~~~~~~~~~~~~~~
 
-```
+```python
 
    >>> import myjson
    >>> import json
@@ -36,7 +34,7 @@ Use as module:
 As a script
 ~~~~~~~~~~~
 
-```
+```python
 
    ~$ myjson -h
    usage: myjson [-h] {get,store} ...
@@ -57,6 +55,7 @@ As a script
    ~$ myjson get ut5n --compact
 
    [1,2,3]
+   
 ```
 Thanks
 ======
