@@ -2,11 +2,11 @@
 `{} mjson <http://myjson.com>`
 ========================
 
-Quickly, freely host json data with this Python wrapper for the `{} mjson <http://myjson.com>`_ free beta service.
+Quickly, freely host json data with this Python wrapper for the _{} mjson <http://myjson.com>_ free beta service.
 
-#Install
+# Install
 ~~~~~~~
->pip install git+https://github.com/Quanta-of-solitude/myjson
+`pip install git+https://github.com/Quanta-of-solitude/myjson`
 
 Use as module:
 ~~~~~~~~~~~~~~
@@ -31,7 +31,7 @@ Use as module:
    'https://api.myjson.com/bins/ccq2j'
 ```
 
-As a script
+# As a script
 ~~~~~~~~~~~
 
 ```python
@@ -54,8 +54,7 @@ As a script
 
    ~$ myjson get ut5n --compact
 
-   [1,2,3]
-   
+   [1,2,3]   
 ```
 Thanks
 ======
