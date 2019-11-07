@@ -6,7 +6,6 @@ setup(
     name='myjson',
     version="1.1.2",
     description='API wrapper for myjson',
-    long_description=open(os.path.join(os.path.dirname(__file__), "readme.rst")).read(),
     url='https://github.com/roundar/myjson',
     download_url='https://github.com/roundar/myjson/archive/v1.1.1.tar.gz',
     packages=['myjson'],
